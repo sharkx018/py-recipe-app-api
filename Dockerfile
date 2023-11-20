@@ -13,13 +13,13 @@ EXPOSE 8000
 ARG DEV=false
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
-    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache postgresql-libs postgresql-dev musl-dev gcc && \
     apk add --update --no-cache --virtual .tmp-build-deps \
-        build-base postgresql-dev musl-dev && \
+        build-base && \
     /py/bin/pip install -r /tmp/requirements.txt && \
-    if [ $DEV = "true" ]; \
-       then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
-      /py/bin/pip install flake8; \
+    if [ $DEV = "true" ]; then \
+        /py/bin/pip install -r /tmp/requirements.dev.txt && \
+        /py/bin/pip install flake8; \
     fi && \
     rm -rf /tmp && \
     apk del .tmp-build-deps && \
